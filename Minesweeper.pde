@@ -22,7 +22,12 @@ public void setup(){
 
 public void setMines(){
     //your code
-    
+    for(int i=0;i<num_rows;i++){
+      for(int j=0;j<num_cols;j++){
+        if(Math.random()<0.2)
+          mines.add(buttons[i][j]);
+      }
+    }
 }
 
 public void draw(){
@@ -45,8 +50,9 @@ public void displayWinningMessage(){
 }
 
 public boolean isValid(int r, int c){
-    //your code here
-    return false;
+  if(r>=0 && r<num_rows && c>=0 && c<num_cols)
+    return true;
+  return false;
 }
 
 public int countMines(int row, int col){
@@ -73,7 +79,10 @@ public class MSButton{
     }
     // called by manager
     public void mousePressed(){
-        clicked = !clicked;
+      if(mouseButton==LEFT && flagged==false)
+        clicked = true;
+      if(mouseButton==RIGHT && clicked==false)
+        flagged = !flagged;
         //your code here
     }
     public void draw(){    
