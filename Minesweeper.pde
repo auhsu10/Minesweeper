@@ -1,11 +1,12 @@
 import de.bezier.guido.*;
 int num_rows=5;
 int num_cols=5;
+int num_mines=2;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines; //ArrayList of just the minesweeper buttons that are mined
 
 public void setup(){
-    size(500,500);
+    size(500,550);
     textAlign(CENTER,CENTER);
     // make the manager
     Interactive.make(this);
@@ -22,11 +23,13 @@ public void setup(){
 
 public void setMines(){
     //your code
-    for(int i=0;i<num_rows;i++){
-      for(int j=0;j<num_cols;j++){
-        if(Math.random()<0.2)
-          mines.add(buttons[i][j]);
-      }
+    for(int m=0;m<num_mines;m++){
+      int randx=(int)(Math.random()*num_rows);
+      int randy=(int)(Math.random()*num_cols);
+      if(!mines.contains(buttons[randx][randy]))
+        mines.add(buttons[randx][randy]);
+      else
+        m--;
     }
 }
 
@@ -58,6 +61,14 @@ public boolean isValid(int r, int c){
 public int countMines(int row, int col){
     int numMines = 0;
     //your code here
+    for(int i=0;i<=2;i++){
+      for(int j=0;j<=2;j++){
+        if(isValid(row+i-1,col+j-1)){
+          if((row+i-1==row && col+j-1==col)||(mines.contains(buttons[row+i-1][col+j-1])))
+            numMines++;
+        }
+      }
+    }
     return numMines;
 }
 
@@ -79,17 +90,22 @@ public class MSButton{
     }
     // called by manager
     public void mousePressed(){
-      if(mouseButton==LEFT && flagged==false)
-        clicked = true;
-      if(mouseButton==RIGHT && clicked==false)
+      //your code here
+      clicked = true;
+      if(mouseButton==RIGHT){
         flagged = !flagged;
-        //your code here
+        clicked = false;
+      }
+      else if(mines.contains(this))
+        displayLosingMessage();
+      //else if(countMines(r,c)>0)
+      //  setLabel(num_mines);
     }
     public void draw(){    
         if(flagged)
             fill(0);
-        //else if( clicked && mines.contains(this) ) 
-        //    fill(255,0,0);
+        else if(clicked && mines.contains(this)) 
+            fill(255,0,0);
         else if(clicked)
             fill(200);
         else 
