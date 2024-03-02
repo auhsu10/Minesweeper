@@ -12,7 +12,6 @@ public void setup(){
     textAlign(CENTER,CENTER);
     // make the manager
     Interactive.make(this);
-    //your code to initialize buttons goes here
     buttons=new MSButton[num_rows][num_cols];
     for(int i=0;i<num_rows;i++){
       for(int j=0;j<num_cols;j++){
@@ -24,7 +23,6 @@ public void setup(){
 }
 
 public void setMines(){
-    //your code
     for(int m=0;m<num_mines;m++){
       int randx=(int)(Math.random()*num_rows);
       int randy=(int)(Math.random()*num_cols);
