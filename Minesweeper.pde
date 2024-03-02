@@ -1,12 +1,14 @@
 import de.bezier.guido.*;
-int num_rows=5;
-int num_cols=5;
-int num_mines=2;
+private int num_rows=10;
+private int num_cols=10;
+private int num_mines=6;
+private boolean gameOver=false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines; //ArrayList of just the minesweeper buttons that are mined
 
 public void setup(){
-    size(500,550);
+    size(500,500);
+    textSize(25);
     textAlign(CENTER,CENTER);
     // make the manager
     Interactive.make(this);
@@ -35,21 +37,49 @@ public void setMines(){
 
 public void draw(){
     background(0);
-    if(isWon() == true)
-        displayWinningMessage();
+    if(gameOver==true)
+      displayLosingMessage();
+    else if(isWon()==true)
+      displayWinningMessage();
 }
 
 public boolean isWon(){
-    //your code here
-    return false;
+    for(int i=0;i<buttons.length;i++){
+      for(int j=0;j<buttons[i].length;j++){
+        if(mines.contains(buttons[i][j]) && !buttons[i][j].isFlagged())
+          return false;
+        if(!mines.contains(buttons[i][j]) && !buttons[i][j].clicked)
+          return false;
+      }
+    }
+    return true;
 }
 
 public void displayLosingMessage(){
-    //your code here
+  String[] lossmessage = {"Y","o","u"," ","L","o","s","t"};
+  gameOver=true;
+  buttons=new MSButton[num_rows][num_cols];
+    for(int i=0;i<num_rows;i++){
+      for(int j=0;j<num_cols;j++){
+        buttons[i][j]=new MSButton(i,j);
+        buttons[i][j].clicked=true;
+      }
+    }
+  for(int i=0;i<lossmessage.length;i++)
+    buttons[num_rows/2-1][i+1].setLabel(lossmessage[i]);
 }
 
 public void displayWinningMessage(){
-    //your code here
+  String[] winmessage = {"Y","o","u"," ","W","o","n","!"};
+  buttons=new MSButton[num_rows][num_cols];
+  for(int i=0;i<num_rows;i++){
+    for(int j=0;j<num_cols;j++){
+      buttons[i][j]=new MSButton(i,j);
+      buttons[i][j].clicked=true;
+    }
+  }
+  for(int i=0;i<winmessage.length;i++)
+    buttons[num_rows/2-1][i+1].setLabel(winmessage[i]);
 }
 
 public boolean isValid(int r, int c){
@@ -60,11 +90,10 @@ public boolean isValid(int r, int c){
 
 public int countMines(int row, int col){
     int numMines = 0;
-    //your code here
     for(int i=0;i<=2;i++){
       for(int j=0;j<=2;j++){
-        if(isValid(row+i-1,col+j-1)){
-          if((row+i-1==row && col+j-1==col)||(mines.contains(buttons[row+i-1][col+j-1])))
+        if(isValid(row+i-1,col+j-1) && !(i==1 && j==1)){
+          if(mines.contains(buttons[row+i-1][col+j-1]))
             numMines++;
         }
       }
@@ -90,26 +119,41 @@ public class MSButton{
     }
     // called by manager
     public void mousePressed(){
-      //your code here
-      clicked = true;
-      if(mouseButton==RIGHT){
-        flagged = !flagged;
-        clicked = false;
+      if(gameOver==false && isWon()==false){
+        clicked = true;
+        if(mouseButton==RIGHT){
+          flagged = !flagged;
+          clicked = false;
+        }
+        else if(mines.contains(this))
+          displayLosingMessage();
+        else if(countMines(myRow,myCol)>0)
+          setLabel(countMines(myRow,myCol));
+        else{
+          for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+              if(isValid(myRow+i-1,myCol+j-1)==true && !(i==0 && j==0)){
+                if(!buttons[myRow+i-1][myCol+j-1].flagged && !buttons[myRow+i-1][myCol+j-1].clicked)
+                  buttons[myRow+i-1][myCol+j-1].mousePressed();
+              }
+            }
+          }
+        }
       }
-      else if(mines.contains(this))
-        displayLosingMessage();
-      //else if(countMines(r,c)>0)
-      //  setLabel(num_mines);
     }
-    public void draw(){    
-        if(flagged)
-            fill(0);
+    public void draw(){
+        if(gameOver==true)
+          fill(160);
+        else if(isWon()==true)
+          fill(255);
+        else if(flagged)
+          fill(225,220,0);
         else if(clicked && mines.contains(this)) 
-            fill(255,0,0);
+          fill(255,0,0);
         else if(clicked)
-            fill(200);
+          fill(200);
         else 
-            fill(100);
+          fill(60);
         rect(x, y, width, height);
         fill(0);
         text(myLabel,x+width/2,y+height/2);
