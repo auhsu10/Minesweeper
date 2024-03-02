@@ -103,7 +103,7 @@ public int countMines(int row, int col){
 public class MSButton{
     private int myRow, myCol;
     private float x,y,width,height;
-    private boolean clicked, flagged;
+    private boolean filled, clicked, flagged;
     private String myLabel;
     public MSButton(int row, int col){
         width = 500/num_cols;
@@ -113,22 +113,24 @@ public class MSButton{
         x = myCol*width;
         y = myRow*height;
         myLabel = "";
-        flagged = clicked = false;
+        flagged = clicked = filled = false;
         Interactive.add(this); // register it with the manager
     }
     // called by manager
     public void mousePressed(){
       if(gameOver==false && isWon()==false){
         clicked = true;
-        if(mouseButton==RIGHT){
+        if(mouseButton==LEFT && isFlagged()==false)
+          filled=true;
+        if(mouseButton==RIGHT && filled==false){
           flagged = !flagged;
           clicked = false;
         }
         else if(mines.contains(this))
           displayLosingMessage();
-        else if(countMines(myRow,myCol)>0)
+        else if(countMines(myRow,myCol)>0 && filled==true)
           setLabel(countMines(myRow,myCol));
-        else{
+        else if(isFlagged()==false){
           for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
               if(isValid(myRow+i-1,myCol+j-1)==true && !(i==0 && j==0)){
