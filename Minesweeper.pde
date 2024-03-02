@@ -1,7 +1,7 @@
 import de.bezier.guido.*;
-private int num_rows=10;
-private int num_cols=10;
-private int num_mines=6;
+private int num_rows=16;
+private int num_cols=16;
+private int num_mines=15;
 private boolean gameOver=false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines; //ArrayList of just the minesweeper buttons that are mined
@@ -23,6 +23,7 @@ public void setup(){
 }
 
 public void setMines(){
+    //your code
     for(int m=0;m<num_mines;m++){
       int randx=(int)(Math.random()*num_rows);
       int randy=(int)(Math.random()*num_cols);
@@ -64,7 +65,7 @@ public void displayLosingMessage(){
       }
     }
   for(int i=0;i<lossmessage.length;i++)
-    buttons[num_rows/2-1][i+1].setLabel(lossmessage[i]);
+    buttons[num_rows/2-1][i+4].setLabel(lossmessage[i]);
 }
 
 public void displayWinningMessage(){
@@ -77,7 +78,7 @@ public void displayWinningMessage(){
     }
   }
   for(int i=0;i<winmessage.length;i++)
-    buttons[num_rows/2-1][i+1].setLabel(winmessage[i]);
+    buttons[num_rows/2-1][i+4].setLabel(winmessage[i]);
 }
 
 public boolean isValid(int r, int c){
